@@ -1,0 +1,50 @@
+# Python
+*.pyc
+__pycache__/
+
+# Virtual Environment
+venv/
+env/
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.so
+*.sqlite3
+__pycache__/
+db.sqlite3
+
+# If you are using PostgreSQL
+*.pg
+
+# Media
+media/
+
+# Static files
+/staticfiles/
+
+/* IDEs
+.idea/
+*.swp
+*.swo
+.vscode/
+
+# Local settings
+local_settings.py
+
+# Docker
+*.env
+docker-compose.override.yml
+
+# macOS
+.DS_Store
+
+# Environment variables
+.env
+
+# Django migrations
+migrations/
+
+# Excel files
+*.xlsx
