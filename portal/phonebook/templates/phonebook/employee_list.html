@@ -1,0 +1,131 @@
+{% extends "main/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Список сотрудников" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">{% trans "Телефонная книга" %}</h2>
+    <div class="text-end">
+        {% if perms.phonebook.add_employee %}
+            <a href="{% url 'employee_add' %}" class="btn btn-success">
+                <img src="{% static 'phonebook/img/add-user.png' %}" alt="{% trans 'Добавить сотрудника' %}" width="20" height="20" class="me-2">
+                {% trans "Добавить сотрудника" %}
+            </a>
+        {% endif %}
+    </div>
+    <div class="input-group mt-3">
+        <input type="text" id="search-input" class="form-control" placeholder="{% trans "Поиск сотрудника..." %}">
+        <button class="btn btn-outline-secondary" type="button" id="search-addon">
+            <img src="{% static 'phonebook/img/search-user.png' %}" alt="{% trans 'Поиск' %}" width="16" height="16">          
+        </button>
+    </div>
+    <table class="table table-bordered table-hover text-center align-middle mt-5">
+        <thead class="table-primary align-middle">
+            <tr>
+                <th scope="col" class="column-width-employees">{% trans "ФИО" %}</th>
+                <th scope="col" class="column-width-employees">{% trans "Должность" %}</th>                
+                <th scope="col" class="column-width-employees">{% trans "Подразделение" %}</th>
+                <th scope="col" class="column-width-employees">{% trans "Email" %}</th>
+                <th scope="col" class="column-width-employees">{% trans "Городской телефон" %}</th>
+                <th scope="col" class="column-width-employees">{% trans "Мобильный телефон" %}</th>
+                <th scope="col" class="column-width-employees">{% trans "Фото" %}</th>                
+                {% if perms.phonebook.change_employee or perms.phonebook.delete_employee %}
+                <th scope="col" class="column-width-employees">{% trans "Порядок" %}</th>
+                <th scope="col" class="column-width-employees">{% trans "Действия" %}</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody id="employee-table">
+            {% for employee in employees %}
+                <tr>
+                    <td>
+                        <a class="text-decoration-none" href="{% url 'employee_detail' employee.id %}">
+                            {% if CURRENT_LANGUAGE == 'ru' %}
+                                {{ employee.name_ru }}                            
+                            {% else %}
+                                {{ employee.name_kk }}
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        {% if CURRENT_LANGUAGE == 'ru' %}
+                            {{ employee.position_ru }}                        
+                        {% else %}
+                            {{ employee.position_kk }}
+                        {% endif %}
+                    </td>                    
+                    <td>                        
+                        {% if CURRENT_LANGUAGE == 'ru' %}
+                            {{ employee.department.department_ru }}                            
+                        {% else %}
+                            {{ employee.department.department_kk }}
+                        {% endif %}                        
+                    </td>
+                    <td>
+                        {% if employee.email %}
+                            <a class="text-decoration-none" href="mailto:{{ employee.email }}">{{ employee.email }}</a>
+                        {% else %}
+                            {{ employee.email|default_if_none:"" }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if employee.city_phone_number %}
+                            <a class="text-decoration-none" href="tel:{{ employee.city_phone_number }}">{{ employee.city_phone_number }}</a>
+                        {% else %}
+                            {{ employee.city_phone_number|default_if_none:"" }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if employee.mobile_number %}
+                            <a class="text-decoration-none" href="tel:{{ employee.mobile_number }}">{{ employee.mobile_number }}</a>
+                        {% else %}
+                            {{ employee.mobile_number|default_if_none:"" }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if employee.photo %}
+                            <img class="img-thumbnail" src="{{ employee.photo.url }}" width="50" height="50" />
+                        {% endif %}
+                    </td>                    
+                    {% if perms.phonebook.change_employee or perms.phonebook.delete_employee %}
+                    <td>
+                        {{ employee.order }}
+                    </td>
+                    <td>
+                        {% if perms.phonebook.change_employee %}
+                            <a href="{% url 'employee_update' employee.id %}" class="btn btn-warning btn-sm mb-2 d-flex align-items-center">
+                                <img src="{% static 'phonebook/img/edit-info.png' %}" alt="{% trans 'Изменить' %}" width="16" height="16" class="me-2">
+                                {% trans "Изменить" %}
+                            </a>
+                        {% endif %}
+                        {% if perms.phonebook.delete_employee %}
+                            <a href="{% url 'employee_delete' employee.id %}" class="btn btn-danger btn-sm d-flex align-items-center">
+                                <img src="{% static 'phonebook/img/delete.png' %}" alt="{% trans 'Удалить' %}" width="16" height="16" class="me-2">
+                                {% trans "Удалить" %}
+                            </a>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('search-input').addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            document.querySelectorAll('#employee-table tr').forEach(function(row) {
+                const rowText = row.textContent.toLowerCase();
+                if (rowText.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

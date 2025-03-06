@@ -1,0 +1,91 @@
+{% extends "main/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Список подразделений" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">{% trans 'Список подразделений' %}</h2>
+    <div class="text-end mb-3">
+        {% if perms.phonebook.add_department %}
+            <a href="{% url 'department_add' %}" class="btn btn-success">
+                <img src="{% static 'phonebook/img/add.png' %}" alt="{% trans 'Создать подразделение' %}" width="20" height="20" class="me-2">
+                {% trans "Создать подразделение" %}
+            </a>
+        {% endif %}
+    </div>
+    <div class="input-group mt-3">
+        <input type="text" id="search-input" class="form-control" placeholder="{% trans "Поиск подразделения..." %}">
+        <button class="btn btn-outline-secondary" type="button" id="search-addon">
+            <img src="{% static 'phonebook/img/magnifying-glass-search.png' %}" alt="{% trans 'Поиск' %}" width="16" height="16">
+        </button>
+    </div>
+    <table class="table table-bordered table-striped table-hover text-center align-middle mt-5">
+        <thead class="table-primary align-middle">
+            <tr>
+                <th scope="col">{% trans "Название" %}</th>                
+                <th scope="col">{% trans "Родительское подразделение" %}</th>                
+                {% if perms.phonebook.change_department or perms.phonebook.delete_department %}                
+                <th scope="col">{% trans "Действия" %}</th>
+                {% endif %} 
+            </tr>
+        </thead>
+        <tbody id="department-table">
+            {% for department in departments %}
+                <tr>
+                    <td>
+                        <a class="text-decoration-none" href="{% url 'department_detail' department.id %}">
+                            {% if CURRENT_LANGUAGE == 'ru' %}
+                                {{ department.department_ru }}                            
+                            {% else %}
+                                {{ department.department_kk }}
+                            {% endif %}
+                        </a>
+                    </td>                    
+                    <td>
+                        {% if department.parent %}
+                            {% if CURRENT_LANGUAGE == 'ru' %}
+                                {{ department.parent.department_ru }}                            
+                            {% else %}
+                                {{ department.parent.department_kk }}
+                            {% endif %}                        
+                        {% endif %}
+                    </td>     
+                     {% if perms.phonebook.change_department or perms.phonebook.delete_department %}                                  
+                    <td>
+                        {% if perms.phonebook.change_department %}
+                            <a href="{% url 'department_update' department.id %}" class="btn btn-warning btn-sm mb-2 d-flex align-items-center">
+                                <img src="{% static 'phonebook/img/edit-info.png' %}" alt="{% trans 'Изменить' %}" width="16" height="16" class="me-2">
+                                {% trans "Изменить" %}
+                            </a>
+                        {% endif %}
+                        {% if perms.phonebook.delete_department %}
+                            <a href="{% url 'department_delete' department.id %}" class="btn btn-danger btn-sm d-flex align-items-center">
+                                <img src="{% static 'phonebook/img/delete.png' %}" alt="{% trans 'Удалить' %}" width="16" height="16" class="me-2">
+                                {% trans "Удалить" %}
+                            </a>
+                        {% endif %}
+                    </td>   
+                    {% endif %}                 
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('search-input').addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            document.querySelectorAll('#department-table tr').forEach(function(row) {
+                const rowText = row.textContent.toLowerCase();
+                if (rowText.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% load i18n static %}
+
+{% block title %}
+    {% trans "О себе" %}
+{% endblock %}
+
+{% block userpage %}
+<div class="container">
+    <h1>{% trans "О себе" %}</h1>
+    <p><strong>{% trans "Имя пользователя" %}:</strong> {{ user.username }}</p>
+    <p><strong>{% trans "Имя" %}:</strong> {{ user.first_name }}</p>
+    <p><strong>{% trans "Фамилия" %}:</strong> {{ user.last_name }}</p>
+    <p><strong>{% trans "Email" %}:</strong> {{ user.email }}</p>
+    {% if user.photo %}
+        <p><strong>{% trans "Фото" %}:</strong> <img src="{{ user.photo.url }}" alt="{% trans "Фото профиля" %}" width="100"></p>
+    {% else %}
+        <p><strong>{% trans "Фото" %}:</strong> {% trans "Нет фото" %}</p>
+    {% endif %}
+</div>
+{% endblock %}
