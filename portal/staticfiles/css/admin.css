@@ -1,0 +1,7 @@
+td.field-name {
+    color: #341ac9; /* Изменение цвета текста */
+}
+
+#changelist table thead th {
+    white-space: normal;}
+
