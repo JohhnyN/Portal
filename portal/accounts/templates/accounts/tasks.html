@@ -1,0 +1,114 @@
+{% extends "main/base.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% trans "Мои задачи" %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">{% trans "Список задач" %}</h2>
+    <div class="text-end mb-3">
+        <a href="{% url 'task_create' %}" class="btn btn-success">
+            <img src="{% static 'accounts/img/to-do-list.png' %}" alt="{% trans 'Создать задачу' %}" width="20" height="20" class="me-2">
+            {% trans "Создать задачу" %}
+        </a>
+    </div>
+    <div class="input-group mt-3">
+        <input type="text" id="search-input" class="form-control" placeholder="{% trans "Поиск задачи..." %}">
+        <button class="btn btn-outline-secondary" type="button" id="search-addon">
+            <img src="{% static 'phonebook/img/magnifying-glass-search.png' %}" alt="{% trans 'Поиск' %}" width="16" height="16">
+        </button>
+    </div>
+    <table class="table table-bordered table-striped table-hover text-center align-middle mt-5">
+        <thead class="table-primary align-middle">
+            <tr>
+                <th scope="col">{% trans "Задача" %}</th>
+                <th scope="col">{% trans "Приоритет" %}</th>
+                <th scope="col">{% trans "Кому расшарено" %}</th>
+                <th scope="col">{% trans "Время начала" %}</th>
+                <th scope="col">{% trans "Время завершения" %}</th>
+                <th scope="col">{% trans "Действия" %}</th>
+            </tr>
+        </thead>
+        <tbody id="task-table">
+            {% for task_with_comments in tasks_with_comments %}
+                <tr id="task-{{ task_with_comments.task.id }}">
+                    <td><a class="text-decoration-none" href="{% url 'task_detail' task_with_comments.task.id %}" style="font-size: 1.25rem;">{{ task_with_comments.task.title }}</a></td>
+                    <td>
+                        <span class="badge {% if task_with_comments.task.priority == 'low' %}bg-warning{% elif task_with_comments.task.priority == 'medium' %}bg-success{% elif task_with_comments.task.priority == 'high' %}bg-danger{% endif %}">
+                            {{ task_with_comments.task.get_priority_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if task_with_comments.shared_with_comments %}
+                            <ul class="list-unstyled">
+                                {% for shared_with_comment in task_with_comments.shared_with_comments %}
+                                    <li>
+                                        {% if CURRENT_LANGUAGE == 'ru' %}
+                                            {{ shared_with_comment.user.first_name_ru }} {{ shared_with_comment.user.last_name_ru }}
+                                        {% else %}
+                                            {{ shared_with_comment.user.first_name_kk }} {{ shared_with_comment.user.last_name_kk }}
+                                        {% endif %}
+                                        {% if shared_with_comment.has_comments %}
+                                            <span class="badge bg-info">{% trans "Есть комментарий" %}</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </td>
+                    <td>{{ task_with_comments.task.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>
+                        {% if task_with_comments.task.is_completed %}
+                            {{ task_with_comments.task.completed_at|date:"d.m.Y H:i" }}
+                        {% else %}
+                            {% trans "В процессе" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task_with_comments.task.is_completed %}
+                            <span class="badge bg-secondary">{% trans "Задача завершена" %}</span>
+                        {% elif task_with_comments.task.user == request.user %}
+                            {% if not task_with_comments.task.comments.exists %}
+                                <a href="{% url 'task_edit' task_with_comments.task.id %}" class="btn btn-warning btn-sm mb-2 d-flex align-items-center">
+                                    <img src="{% static 'phonebook/img/edit-info.png' %}" alt="{% trans 'Изменить' %}" width="16" height="16" class="me-2">
+                                    {% trans "Изменить" %}
+                                </a>
+                                <a href="{% url 'task_delete' task_with_comments.task.id %}" class="btn btn-danger btn-sm mb-2 d-flex align-items-center">
+                                    <img src="{% static 'phonebook/img/delete.png' %}" alt="{% trans 'Удалить' %}" width="16" height="16" class="me-2">
+                                    {% trans "Удалить" %}
+                                </a>
+                            {% endif %}
+                            <a href="{% url 'task_complete' task_with_comments.task.id %}" class="btn btn-success btn-sm mb-2 d-flex align-items-center">
+                                <img src="{% static 'accounts/img/completed.png' %}" alt="{% trans 'Завершить' %}" width="16" height="16" class="me-2">
+                                {% trans "Завершить" %}
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">{% trans "У вас нет задач." %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('search-input').addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            document.querySelectorAll('#task-table tr').forEach(function(row) {
+                const rowText = row.textContent.toLowerCase();
+                if (rowText.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

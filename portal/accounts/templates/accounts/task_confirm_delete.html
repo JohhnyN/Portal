@@ -1,0 +1,19 @@
+<!-- filepath: d:\PROJECTS\Portal\portal\accounts\templates\accounts\task_confirm_delete.html -->
+{% extends "main/base.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% trans "Удалить задачу" %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{% trans "Удалить задачу" %}</h1>
+    <p>{% trans "Вы уверены, что хотите удалить задачу?" %}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">{% trans "Удалить" %}</button>
+        <a href="{% url 'tasks' %}" class="btn btn-secondary">{% trans "Отмена" %}</a>
+    </form>
+</div>
+{% endblock %}

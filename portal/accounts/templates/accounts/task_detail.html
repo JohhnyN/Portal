@@ -1,0 +1,99 @@
+<!-- filepath: d:\PROJECTS\Portal\portal\accounts\templates\accounts\task_detail.html -->
+{% extends "main/base.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {{ task.title }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center bg-primary text-warning">
+                    <h2>{{ task.title }}</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td class="w-25"><strong>{% trans "Описание" %}</strong></td>
+                                    <td>{{ task.description }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "Приоритет" %}</strong></td>
+                                    <td>{{ task.get_priority_display }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "Кто делает" %}</strong></td>
+                                    <td>
+                                        {% if CURRENT_LANGUAGE == 'ru' %}
+                                            {{ task.user.first_name_ru }} {{ task.user.last_name_ru }}
+                                        {% else %}
+                                            {{ task.user.first_name_kk }} {{ task.user.last_name_kk }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "Время начала" %}</strong></td>
+                                    <td>{{ task.created_at|date:"d.m.Y H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "Время завершения" %}</strong></td>
+                                    <td>
+                                        {% if task.is_completed %}
+                                            {{ task.completed_at|date:"d.m.Y H:i" }}
+                                        {% else %}
+                                            {% trans "В процессе" %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-end mt-3">
+                        {% if task.user == request.user and not task.is_completed %}
+                            <a href="{% url 'task_edit' task.id %}" class="btn btn-warning">{% trans "Изменить" %}</a>
+                            <a href="{% url 'task_delete' task.id %}" class="btn btn-danger">{% trans "Удалить" %}</a>
+                            <a href="{% url 'task_complete' task.id %}" class="btn btn-success">{% trans "Завершить" %}</a>
+                        {% endif %}
+                        <a href="{% url 'tasks' %}" class="btn btn-secondary">{% trans "Назад к списку задач" %}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5>{% trans "Комментарии" %}</h5>
+                </div>
+                <div class="card-body">
+                    {% for comment in comments %}
+                        <div class="mb-3 p-3 border rounded">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ comment.user.username }}</strong>
+                                <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+                            </div>
+                            <p class="mt-2">{{ comment.text }}</p>
+                        </div>
+                    {% empty %}
+                        <p>{% trans "Комментариев пока нет." %}</p>
+                    {% endfor %}
+                    {% if not task.is_completed %}
+                        <form method="post" class="mt-4">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="id_text">{{ form.text.label_tag }}</label>
+                                <textarea name="text" class="form-control w-100" rows="3" placeholder="Оставьте комментарий..." required id="id_text"></textarea>
+                            </div>
+                            <div class="text-end mt-3">
+                                <button type="submit" class="btn btn-primary">{% trans "Добавить комментарий" %}</button>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

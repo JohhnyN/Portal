@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, Task, Comment
 from django.utils.translation import gettext_lazy as _
 
 
@@ -71,3 +71,19 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
+
+@admin.register(Task)
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ("title", "user", "is_completed", "created_at", "updated_at")
+    list_filter = ("is_completed", "created_at", "updated_at")
+    search_fields = ("title", "description", "user__username")
+    ordering = ("-created_at",)
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("task", "user", "text", "created_at")
+    list_filter = ("created_at",)
+    search_fields = ("task__title", "user__username", "text")
+    ordering = ("-created_at",)

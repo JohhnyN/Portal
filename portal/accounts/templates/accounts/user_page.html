@@ -1,125 +1,21 @@
+<!-- filepath: d:\PROJECTS\Portal\portal\accounts\templates\accounts\user_page.html -->
 {% extends "main/base.html" %}
 {% load i18n static %}
 
 {% block title %}
-    {% trans "Страница пользователя" %}
+    {% trans "Моя страница" %}
 {% endblock %}
 
 {% block content %}
-
-<div class="d-flex h-100">
-    <!-- Боковое меню -->
-    <nav id="sidebarMenu" class="sidebar d-lg-block collapse sidebar-expanded">
-        <div>            
-            <ul class="nav flex-column py-4 border-bottom" id="toggleSidebar" href="#">
-                <li class="nav-item">
-                    <a class="nav-link link-light" aria-current="page" href="#" title="{% trans 'Моя страница' %}">
-                        <img src="{% static 'accounts/img/menu2.png' %}" alt="{% trans 'Меню' %}" width="16" height="16" class="me-2">
-                        <span>{% trans "Моя страница" %}</span>
-                    </a>
-                </li>
-            </ul>
-            <ul class="nav flex-column py-4 border-bottom">
-                <li class="nav-item">
-                    <a class="nav-link link-light" aria-current="page" href="{% url 'about' %}" title="{% trans 'О себе' %}">
-                        <img src="{% static 'accounts/img/account-information.png' %}" alt="{% trans 'Изменить' %}" width="16" height="16" class="me-2">
-                        <span>{% trans "О себе" %}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link link-light" aria-current="page" href="#" title="{% trans 'О себе' %}">
-                        <img src="{% static 'accounts/img/account-information.png' %}" alt="{% trans 'Изменить' %}" width="16" height="16" class="me-2">
-                        <span>{% trans "О себе" %}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link link-light " href="#" title="{% trans 'Фотографии' %}">
-                        <img src="{% static 'accounts/img/insert-picture-icon.png' %}" alt="{% trans 'Фотографии' %}" width="16" height="16" class="me-2">
-                        <span>{% trans "Фотографии" %}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link link-light" href="#" title="{% trans 'Задачи' %}">
-                        <img src="{% static 'accounts/img/to-do-list.png' %}" alt="{% trans 'Задачи' %}" width="16" height="16" class="me-2">
-                        <span>{% trans "Задачи" %}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link link-light" href="#" title="{% trans 'Документы' %}">
-                        <img src="{% static 'accounts/img/google-docs.png' %}" alt="{% trans 'Документы' %}" width="16" height="16" class="me-2">
-                        <span>{% trans "Документы" %}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link link-light" href="#" title="{% trans 'Контакты' %}">
-                        <img src="{% static 'accounts/img/contact.png' %}" alt="{% trans 'Контакты' %}" width="16" height="16" class="me-2">
-                        <span>{% trans "Контакты" %}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link link-light" href="#" title="{% trans 'Профиль' %}">
-                        <img src="{% static 'accounts/img/avatar.png' %}" alt="{% trans 'Профиль' %}" width="16" height="16" class="me-2">
-                        <span>{% trans "Профиль" %}</span>
-                    </a>
-                </li>
-            </ul>
-            <ul class="nav flex-column py-4 border-bottom">
-                <li class="nav-item">
-                    <form method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-link link-light btn btn-link" title="{% trans 'Выйти' %}">
-                            <img src="{% static 'accounts/img/logout.png' %}" alt="{% trans 'Выйти' %}" width="16" height="16" class="me-2">
-                            <span>{% trans "Выйти" %}</span>
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Основная область -->
-    <div class="main-content">
-        <div class="container" id="contentArea">
-            {% block userpage %}{% endblock %}
-            <!-- Контент будет загружаться сюда -->
+<div class="container mt-5">
+    <h1>{% trans "Моя страница" %}</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ user.username }}</h5>
+            <p class="card-text">{% trans "Имя" %}: {{ user.first_name }}</p>
+            <p class="card-text">{% trans "Фамилия" %}: {{ user.last_name }}</p>
+            <p class="card-text">{% trans "Email" %}: {{ user.email }}</p>
         </div>
     </div>
 </div>
-
-<script>
-    // Добавить класс "active" к активному элементу меню   
-    document.addEventListener('DOMContentLoaded', function() {
-        var links = document.querySelectorAll('.nav-link');
-        var activeLink = null;
-
-        links.forEach(function(link) {
-            if (link.classList.contains('active')) {
-                activeLink = link;
-            }
-
-            link.addEventListener('click', function() {
-                links.forEach(function(link) {
-                    link.classList.remove('active');
-                });
-                if (link.title !== '{% trans "Моя страница" %}') {
-                    link.classList.add('active');
-                    activeLink = link;
-                }
-            });
-        });
-
-        // Свернуть/развернуть боковое меню
-        document.getElementById('toggleSidebar').addEventListener('click', function () {
-            var sidebar = document.getElementById('sidebarMenu');
-            sidebar.classList.toggle('sidebar-collapsed');
-            sidebar.classList.toggle('sidebar-expanded');
-
-            if (activeLink) {
-                activeLink.classList.add('active');
-            }
-        });
-    });
-</script>
-
-
 {% endblock %}
