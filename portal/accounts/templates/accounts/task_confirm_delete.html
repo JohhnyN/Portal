@@ -1,12 +1,12 @@
 <!-- filepath: d:\PROJECTS\Portal\portal\accounts\templates\accounts\task_confirm_delete.html -->
-{% extends "main/base.html" %}
+{% extends "accounts/user_page.html" %}
 {% load i18n static %}
 
 {% block title %}
-    {% trans "Удалить задачу" %}
+    {% trans "Удаление задачи" %}
 {% endblock %}
 
-{% block content %}
+{% block user_content %}
 <div class="container mt-5">
     <h1>{% trans "Удалить задачу" %}</h1>
     <p>{% trans "Вы уверены, что хотите удалить задачу?" %}</p>

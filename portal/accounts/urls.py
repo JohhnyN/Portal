@@ -1,5 +1,5 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LoginView, LogoutView
 from .views import (
     user_page,
     about,
@@ -9,15 +9,20 @@ from .views import (
     task_delete,
     task_complete,
     task_detail,
+    profile,
 )
 
 urlpatterns = [
     path(
         "login/",
-        auth_views.LoginView.as_view(template_name="accounts/login.html"),
+        LoginView.as_view(template_name="accounts/login.html"),
         name="login",
     ),
-    path("logout/", auth_views.LogoutView.as_view(next_page="/"), name="logout"),
+    path(
+        "logout/",
+        LogoutView.as_view(),
+        name="logout",
+    ),
     path("user_page/", user_page, name="user_page"),
     path("about/", about, name="about"),
     path("tasks/", tasks, name="tasks"),
@@ -26,4 +31,5 @@ urlpatterns = [
     path("tasks/<int:pk>/delete/", task_delete, name="task_delete"),
     path("tasks/<int:pk>/complete/", task_complete, name="task_complete"),
     path("tasks/<int:pk>/", task_detail, name="task_detail"),
+    path("profile/", profile, name="profile"),
 ]

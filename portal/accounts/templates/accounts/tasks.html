@@ -1,11 +1,11 @@
-{% extends "main/base.html" %}
+{% extends "accounts/user_page.html" %}
 {% load i18n static %}
 
 {% block title %}
-    {% trans "Мои задачи" %}
+    {% trans "Список задач" %}
 {% endblock %}
 
-{% block content %}
+{% block user_content %}
 <div class="container mt-5">
     <h2 class="text-center">{% trans "Список задач" %}</h2>
     <div class="text-end mb-3">

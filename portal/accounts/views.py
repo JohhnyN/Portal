@@ -20,13 +20,18 @@ def about(request):
 def tasks(request):
     query = request.GET.get("q")
     if query:
-        user_tasks = Task.objects.filter(user=request.user, title__icontains=query)
+        user_tasks = Task.objects.filter(
+            user=request.user, title__icontains=query
+        ) | Task.objects.filter(shared_with=request.user, title__icontains=query)
     else:
         user_tasks = Task.objects.filter(user=request.user) | Task.objects.filter(
             shared_with=request.user
         )
+
+    user_tasks = user_tasks.distinct().order_by("is_completed", "-created_at")
+
     tasks_with_comments = []
-    for task in user_tasks.distinct():
+    for task in user_tasks:
         shared_with_comments = []
         for user in task.shared_with.all():
             shared_with_comments.append(
@@ -110,3 +115,8 @@ def task_detail(request, pk):
         "accounts/task_detail.html",
         {"task": task, "comments": comments, "form": form},
     )
+
+
+@login_required
+def profile(request):
+    return render(request, "accounts/profile.html", {"user": request.user})

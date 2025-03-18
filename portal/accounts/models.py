@@ -102,3 +102,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Комментарий от {self.user.username} к задаче {self.task.title}"
+
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
