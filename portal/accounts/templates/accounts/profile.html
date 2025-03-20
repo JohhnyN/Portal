@@ -30,15 +30,15 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="custom_first_name" class="form-label">{% trans "Имя" %}</label>
-                    <input type="text" class="form-control" id="custom_first_name" name="custom_first_name" value="{{ user.custom_first_name }}">
+                    <input type="text" class="form-control" id="custom_first_name" name="custom_first_name" value="{{ user.custom_first_name|default_if_none:'' }}">
                 </div>
                 <div class="mb-3">
                     <label for="custom_last_name" class="form-label">{% trans "Фамилия" %}</label>
-                    <input type="text" class="form-control" id="custom_last_name" name="custom_last_name" value="{{ user.custom_last_name }}">
+                    <input type="text" class="form-control" id="custom_last_name" name="custom_last_name" value="{{ user.custom_last_name|default_if_none:'' }}">
                 </div>
                 <div class="mb-3">
                     <label for="surname" class="form-label">{% trans "Отчество" %}</label>
-                    <input type="text" class="form-control" id="surname" name="surname" value="{{ user.surname }}">
+                    <input type="text" class="form-control" id="surname" name="surname" value="{{ user.surname|default_if_none:'' }}">
                 </div>
                 <button type="submit" class="btn btn-primary">{% trans "Сохранить изменения" %}</button>
             </form>

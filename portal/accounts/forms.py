@@ -6,7 +6,7 @@ from .models import Task, Comment, CustomUser
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ["title", "description", "priority", "shared_with", "is_completed"]
+        fields = ["title", "description", "priority", "shared_with"]
         widgets = {
             "shared_with": forms.SelectMultiple(attrs={"class": "form-control"}),
         }

@@ -61,24 +61,15 @@
                         <div class="row mb-3">
                             <label for="id_shared_with" class="col-sm-3 col-form-label">{{ form.shared_with.label }}</label>
                             <div class="col-sm-9">
-                                <select name="shared_with" class="form-control" id="id_shared_with" multiple>
-                                    {% for user in form.shared_with.field.queryset %}
-                                        <option value="{{ user.pk }}" {% if user.pk in form.shared_with.value %}selected{% endif %}>
-                                            {{ user }}
+                                <select name="shared_with" id="id_shared_with" class="form-control w-100" multiple="multiple">
+                                    {% for user in form.fields.shared_with.queryset %}
+                                        <option value="{{ user.pk }}" {% if user in form.initial.shared_with %}selected{% endif %}>
+                                            {{ user.custom_first_name|default_if_none:'' }} {{ user.custom_last_name|default_if_none:'' }} {{ user.surname|default_if_none:'' }}
                                         </option>
                                     {% endfor %}
                                 </select>
                                 <div class="invalid-feedback">
                                     {% trans "Вы должны выбрать хотя бы одного пользователя." %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <label for="id_is_completed" class="col-sm-3 col-form-label">{{ form.is_completed.label }}</label>
-                            <div class="col-sm-9">
-                                {{ form.is_completed }}
-                                <div class="invalid-feedback">
-                                    {% trans "Вы должны указать, завершена ли задача." %}
                                 </div>
                             </div>
                         </div>
@@ -99,18 +90,20 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('task-form');
+    $(document).ready(function() {
+        $('#id_shared_with').select2();
 
-        // Validate form on submission
-        form.addEventListener('submit', function(event) {
-            let isValid = form.checkValidity();
+        const form = $('#task-form');
 
-            if (!isValid) {
+        form.on('submit', function(event) {
+            if (!this.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
-                form.classList.add('was-validated');
+                form.addClass('was-validated');
             }
         });
     });

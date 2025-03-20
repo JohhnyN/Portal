@@ -45,7 +45,11 @@
                             <ul class="list-unstyled">
                                 {% for shared_with_comment in task_with_comments.shared_with_comments %}
                                     <li>
-                                        {{ shared_with_comment.user.custom_first_name }} {{ shared_with_comment.user.custom_last_name }}
+                                        {% if shared_with_comment.user.custom_first_name or shared_with_comment.user.custom_last_name %}
+                                            {{ shared_with_comment.user.custom_first_name }} {{ shared_with_comment.user.custom_last_name }}
+                                        {% else %}
+                                            {{ shared_with_comment.user.username }}
+                                        {% endif %}
                                         {% if shared_with_comment.has_comments %}
                                             <span class="badge bg-info">{% trans "Есть комментарий" %}</span>
                                         {% endif %}
@@ -66,15 +70,17 @@
                         {% if task_with_comments.task.is_completed %}
                             <span class="badge bg-secondary">{% trans "Задача завершена" %}</span>
                         {% elif task_with_comments.task.user == request.user %}
-                            {% if not task_with_comments.task.comments.exists %}
-                                <a href="{% url 'task_edit' task_with_comments.task.id %}" class="btn btn-warning btn-sm mb-2 d-flex align-items-center">
-                                    <img src="{% static 'phonebook/img/edit-info.png' %}" alt="{% trans 'Изменить' %}" width="16" height="16" class="me-2">
-                                    {% trans "Изменить" %}
-                                </a>
-                                <a href="{% url 'task_delete' task_with_comments.task.id %}" class="btn btn-danger btn-sm mb-2 d-flex align-items-center">
-                                    <img src="{% static 'phonebook/img/delete.png' %}" alt="{% trans 'Удалить' %}" width="16" height="16" class="me-2">
-                                    {% trans "Удалить" %}
-                                </a>
+                            {% if not task_with_comments.shared_with_comments %}
+                                {% if not task_with_comments.task.comments.exists %}
+                                    <a href="{% url 'task_edit' task_with_comments.task.id %}" class="btn btn-warning btn-sm mb-2 d-flex align-items-center">
+                                        <img src="{% static 'phonebook/img/edit-info.png' %}" alt="{% trans 'Изменить' %}" width="16" height="16" class="me-2">
+                                        {% trans "Изменить" %}
+                                    </a>
+                                    <a href="{% url 'task_delete' task_with_comments.task.id %}" class="btn btn-danger btn-sm mb-2 d-flex align-items-center">
+                                        <img src="{% static 'phonebook/img/delete.png' %}" alt="{% trans 'Удалить' %}" width="16" height="16" class="me-2">
+                                        {% trans "Удалить" %}
+                                    </a>
+                                {% endif %}
                             {% endif %}
                             <a href="{% url 'task_complete' task_with_comments.task.id %}" class="btn btn-success btn-sm mb-2 d-flex align-items-center">
                                 <img src="{% static 'accounts/img/completed.png' %}" alt="{% trans 'Завершить' %}" width="16" height="16" class="me-2">

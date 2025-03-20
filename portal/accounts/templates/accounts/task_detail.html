@@ -29,10 +29,30 @@
                                 <tr>
                                     <td><strong>{% trans "Кто создал" %}</strong></td>
                                     <td>
-                                        {% if CURRENT_LANGUAGE == 'ru' %}
-                                            {{ task.user.first_name_ru }} {{ task.user.last_name_ru }}
+                                        {% if task.user.custom_first_name or task.user.custom_last_name %}
+                                            {{ task.user.custom_first_name|default_if_none:'' }} {{ task.user.custom_last_name|default_if_none:'' }}
                                         {% else %}
-                                            {{ task.user.first_name_kk }} {{ task.user.last_name_kk }}
+                                            {{ task.user.username }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "Кому делегировано" %}</strong></td>
+                                    <td>
+                                        {% if task.shared_with.exists %}
+                                            <ul class="list-unstyled">
+                                                {% for user in task.shared_with.all %}
+                                                    <li>
+                                                        {% if user.custom_first_name or user.custom_last_name %}
+                                                            {{ user.custom_first_name|default_if_none:'' }} {{ user.custom_last_name|default_if_none:'' }}
+                                                        {% else %}
+                                                            {{ user.username }}
+                                                        {% endif %}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            {% trans "Не делегировано" %}
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -55,8 +75,10 @@
                     </div>
                     <div class="text-end mt-3">
                         {% if task.user == request.user and not task.is_completed %}
-                            <a href="{% url 'task_edit' task.id %}" class="btn btn-warning">{% trans "Изменить" %}</a>
-                            <a href="{% url 'task_delete' task.id %}" class="btn btn-danger">{% trans "Удалить" %}</a>
+                            {% if not task.shared_with.exists %}
+                                <a href="{% url 'task_edit' task.id %}" class="btn btn-warning">{% trans "Изменить" %}</a>
+                                <a href="{% url 'task_delete' task.id %}" class="btn btn-danger">{% trans "Удалить" %}</a>
+                            {% endif %}
                             <a href="{% url 'task_complete' task.id %}" class="btn btn-success">{% trans "Завершить" %}</a>
                         {% endif %}
                         <a href="{% url 'tasks' %}" class="btn btn-secondary">{% trans "Назад к списку задач" %}</a>

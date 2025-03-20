@@ -6,13 +6,13 @@ from django.utils.translation import gettext_lazy as _
 
 class CustomUser(AbstractUser):
     custom_first_name = models.CharField(
-        max_length=300, verbose_name=_("Имя"), blank=True, null=True
+        max_length=300, verbose_name=_("Имя"), blank=True, null=True, default=""
     )
     custom_last_name = models.CharField(
-        max_length=300, verbose_name=_("Фамилия"), blank=True, null=True
+        max_length=300, verbose_name=_("Фамилия"), blank=True, null=True, default=""
     )
     surname = models.CharField(
-        max_length=300, verbose_name=_("Отчество"), blank=True, null=True
+        max_length=300, verbose_name=_("Отчество"), blank=True, null=True, default=""
     )
     photo = models.ImageField(upload_to="profile_photos/", null=True, blank=True)
 

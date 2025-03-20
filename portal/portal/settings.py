@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "import_export",
     "mptt",
     "django_python3_ldap",
+    "django_select2",
     "accounts",
     "main",
     "phonebook",
