@@ -25,7 +25,7 @@
             <tr>
                 <th scope="col">{% trans "Задача" %}</th>
                 <th scope="col">{% trans "Приоритет" %}</th>
-                <th scope="col">{% trans "Кому расшарено" %}</th>
+                <th scope="col">{% trans "Кому делегировано" %}</th>
                 <th scope="col">{% trans "Время начала" %}</th>
                 <th scope="col">{% trans "Время завершения" %}</th>
                 <th scope="col">{% trans "Действия" %}</th>
@@ -45,11 +45,7 @@
                             <ul class="list-unstyled">
                                 {% for shared_with_comment in task_with_comments.shared_with_comments %}
                                     <li>
-                                        {% if CURRENT_LANGUAGE == 'ru' %}
-                                            {{ shared_with_comment.user.first_name_ru }} {{ shared_with_comment.user.last_name_ru }}
-                                        {% else %}
-                                            {{ shared_with_comment.user.first_name_kk }} {{ shared_with_comment.user.last_name_kk }}
-                                        {% endif %}
+                                        {{ shared_with_comment.user.custom_first_name }} {{ shared_with_comment.user.custom_last_name }}
                                         {% if shared_with_comment.has_comments %}
                                             <span class="badge bg-info">{% trans "Есть комментарий" %}</span>
                                         {% endif %}

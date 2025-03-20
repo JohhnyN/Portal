@@ -2,8 +2,8 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from .models import Task
-from .forms import TaskForm, CommentForm
+from .models import Task, CustomUser
+from .forms import TaskForm, CommentForm, ProfileUpdateForm
 
 
 @login_required
@@ -53,7 +53,7 @@ def tasks(request):
 @login_required
 def task_create(request):
     if request.method == "POST":
-        form = TaskForm(request.POST)
+        form = TaskForm(request.POST, user=request.user)
         if form.is_valid():
             task = form.save(commit=False)
             task.user = request.user
@@ -61,20 +61,20 @@ def task_create(request):
             form.save_m2m()
             return redirect("tasks")
     else:
-        form = TaskForm()
+        form = TaskForm(user=request.user)
     return render(request, "accounts/task_form.html", {"form": form})
 
 
 @login_required
 def task_edit(request, pk):
-    task = get_object_or_404(Task, pk=pk, user=request.user)
+    task = get_object_or_404(Task, pk=pk)
     if request.method == "POST":
-        form = TaskForm(request.POST, instance=task)
+        form = TaskForm(request.POST, instance=task, user=request.user)
         if form.is_valid():
             form.save()
             return redirect("tasks")
     else:
-        form = TaskForm(instance=task)
+        form = TaskForm(instance=task, user=request.user)
     return render(request, "accounts/task_form.html", {"form": form})
 
 
@@ -120,3 +120,21 @@ def task_detail(request, pk):
 @login_required
 def profile(request):
     return render(request, "accounts/profile.html", {"user": request.user})
+
+
+@login_required
+def update_profile(request):
+    if request.method == "POST":
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect("profile")
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+    return render(request, "accounts/profile.html", {"form": form})
+
+
+@login_required
+def users(request):
+    users = CustomUser.objects.filter(is_superuser=False)
+    return render(request, "accounts/users.html", {"users": users})

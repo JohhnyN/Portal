@@ -27,7 +27,7 @@
                                     <td>{{ task.get_priority_display }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>{% trans "Кто делает" %}</strong></td>
+                                    <td><strong>{% trans "Кто создал" %}</strong></td>
                                     <td>
                                         {% if CURRENT_LANGUAGE == 'ru' %}
                                             {{ task.user.first_name_ru }} {{ task.user.last_name_ru }}

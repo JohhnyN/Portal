@@ -1,4 +1,3 @@
-<!-- filepath: d:\PROJECTS\Portal\portal\accounts\templates\accounts\user_page.html -->
 {% extends "main/base.html" %}
 {% load i18n static %}
 
@@ -7,28 +6,111 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="list-group">
-                <a href="{% url 'profile' %}" class="list-group-item list-group-item-action">
-                    {% trans "Профиль пользователя" %}
-                </a>
-                <a href="{% url 'tasks' %}" class="list-group-item list-group-item-action">
-                    {% trans "Задачи" %}
-                </a>
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="list-group-item list-group-item-action">
-                        {% trans "Выход" %}
-                    </button>
-                </form>
-            </div>
+<div class="d-flex h-100">
+    <!-- Боковое меню -->
+    <nav id="sidebarMenu" class="sidebar d-lg-block bg-dark text-white collapse sidebar-expanded">
+        <div>
+            <ul class="nav flex-column py-4 border-bottom">
+                <li class="nav-item">
+                    {% url 'user_page' as user_page_url %}
+                    <a class="nav-link link-light {% if request.path == user_page_url %}active{% endif %}" aria-current="page" href="{{ user_page_url }}" title="{% trans 'Моя страница' %}" data-bs-toggle="tooltip">
+                        <img src="{% static 'accounts/img/account-information.png' %}" alt="{% trans 'Меню' %}" width="16" height="16" class="me-2">
+                        <span>{% trans "Моя страница" %}</span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav flex-column py-4 border-bottom">
+                <li class="nav-item">
+                    {% url 'tasks' as tasks_url %}
+                    <a class="nav-link link-light {% if request.path == tasks_url %}active{% endif %}" href="{{ tasks_url }}" title="{% trans 'Задачи' %}" data-bs-toggle="tooltip">
+                        <img src="{% static 'accounts/img/to-do-list.png' %}" alt="{% trans 'Задачи' %}" width="16" height="16" class="me-2">
+                        <span>{% trans "Задачи" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    {% url 'profile' as profile_url %}
+                    <a class="nav-link link-light {% if request.path == profile_url %}active{% endif %}" href="{{ profile_url }}" title="{% trans 'Профиль' %}" data-bs-toggle="tooltip">
+                        <img src="{% static 'accounts/img/avatar.png' %}" alt="{% trans 'Профиль' %}" width="16" height="16" class="me-2">
+                        <span>{% trans "Профиль" %}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    {% url 'users' as users_url %}
+                    <a class="nav-link link-light {% if request.path == users_url %}active{% endif %}" href="{{ users_url }}" title="{% trans 'Пользователи' %}" data-bs-toggle="tooltip">
+                        <img src="{% static 'accounts/img/users.png' %}" alt="{% trans 'Пользователи' %}" width="16" height="16" class="me-2">
+                        <span>{% trans "Пользователи" %}</span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav flex-column py-4 border-bottom">
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link link-light btn btn-link" title="{% trans 'Выйти' %}" data-bs-toggle="tooltip">
+                            <img src="{% static 'accounts/img/logout.png' %}" alt="{% trans 'Выйти' %}" width="16" height="16" class="me-2">
+                            <span>{% trans "Выйти" %}</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </div>
-        <div class="col-md-9">
-            {% block user_content %}
-            {% endblock %}
+    </nav>
+
+    <!-- Основная область -->
+    <div class="main-content flex-grow-1 p-4 bg-light">
+        <button id="toggleSidebar" class="btn mb-3" title="{% trans 'Меню' %}" data-bs-toggle="tooltip">
+            <img id="menuIcon" src="{% static 'accounts/img/left-arrowhead.png' %}" alt="{% trans 'Меню' %}" width="16" height="16" class="me-2">
+        </button>
+        <div class="container" id="contentArea">
+            {% block user_content %}{% endblock %}
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var links = document.querySelectorAll('.nav-link');
+        var activeLink = null;
+
+        links.forEach(function(link) {
+            if (link.classList.contains('active')) {
+                activeLink = link;
+            }
+
+            link.addEventListener('click', function() {
+                links.forEach(function(link) {
+                    link.classList.remove('active');
+                });
+                if (link.title !== '{% trans "Моя страница" %}') {
+                    link.classList.add('active');
+                    activeLink = link;
+                }
+            });
+        });
+
+        // Свернуть/развернуть боковое меню
+        document.getElementById('toggleSidebar').addEventListener('click', function () {
+            var sidebar = document.getElementById('sidebarMenu');
+            var menuIcon = document.getElementById('menuIcon');
+            sidebar.classList.toggle('sidebar-collapsed');
+            sidebar.classList.toggle('sidebar-expanded');
+
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                menuIcon.src = "{% static 'accounts/img/right-arrow.png' %}";
+            } else {
+                menuIcon.src = "{% static 'accounts/img/left-arrowhead.png' %}";
+            }
+
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        });
+
+        // Инициализация подсказок Bootstrap
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
 {% endblock %}

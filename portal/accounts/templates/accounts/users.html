@@ -1,0 +1,33 @@
+<!-- filepath: d:\PROJECTS\Portal\portal\accounts\templates\accounts\users.html -->
+{% extends "accounts/user_page.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% trans "Пользователи" %}
+{% endblock %}
+
+{% block user_content %}
+<div class="container mt-5">
+    <h2 class="text-center">{% trans "Пользователи" %}</h2>
+    <table class="table table-bordered table-striped table-hover text-center align-middle mt-5">
+        <thead class="table-primary align-middle">
+            <tr>
+                <th scope="col">{% trans "Имя пользователя" %}</th>
+                <th scope="col">{% trans "Электронная почта" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">{% trans "Нет зарегистрированных пользователей." %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

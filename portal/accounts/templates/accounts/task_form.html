@@ -26,9 +26,70 @@
                 <div class="card-body">
                     <form method="post" class="needs-validation" novalidate id="task-form">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        <div class="row mb-3">
+                            <label for="id_title" class="col-sm-3 col-form-label">{{ form.title.label }}</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="title" class="form-control" maxlength="255" placeholder="" required autofocus id="id_title" value="{{ form.title.value|default_if_none:'' }}">
+                                <div class="invalid-feedback">
+                                    {% trans "Поле должно быть заполнено." %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="id_description" class="col-sm-3 col-form-label">{{ form.description.label }}</label>
+                            <div class="col-sm-9">
+                                <textarea name="description" cols="40" rows="10" required id="id_description" class="form-control">{{ form.description.value|default_if_none:'' }}</textarea>
+                                <div class="invalid-feedback">
+                                    {% trans "Поле должно быть заполнено." %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="id_priority" class="col-sm-3 col-form-label">{{ form.priority.label }}</label>
+                            <div class="col-sm-9">
+                                <select name="priority" class="form-control card-body-form" id="id_priority" required>
+                                    <option value=""></option>
+                                    {% for choice in form.priority.field.choices %}
+                                        <option value="{{ choice.0 }}" {% if choice.0 == form.priority.value %}selected{% endif %}>{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    {% trans "Вы должны выбрать приоритет." %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="id_shared_with" class="col-sm-3 col-form-label">{{ form.shared_with.label }}</label>
+                            <div class="col-sm-9">
+                                <select name="shared_with" class="form-control" id="id_shared_with" multiple>
+                                    {% for user in form.shared_with.field.queryset %}
+                                        <option value="{{ user.pk }}" {% if user.pk in form.shared_with.value %}selected{% endif %}>
+                                            {{ user }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    {% trans "Вы должны выбрать хотя бы одного пользователя." %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="id_is_completed" class="col-sm-3 col-form-label">{{ form.is_completed.label }}</label>
+                            <div class="col-sm-9">
+                                {{ form.is_completed }}
+                                <div class="invalid-feedback">
+                                    {% trans "Вы должны указать, завершена ли задача." %}
+                                </div>
+                            </div>
+                        </div>
                         <div class="text-end">
-                            <button type="submit" class="btn btn-success me-2">{% trans "Сохранить" %}</button>
+                            <button type="submit" class="btn btn-success me-2">
+                                {% if form.instance.pk %}
+                                    {% trans "Изменить" %}
+                                {% else %}
+                                    {% trans "Создать" %}
+                                {% endif %}
+                            </button>
                             <a href="{% url 'tasks' %}" class="btn btn-secondary">{% trans "Отмена" %}</a>
                         </div>
                     </form>

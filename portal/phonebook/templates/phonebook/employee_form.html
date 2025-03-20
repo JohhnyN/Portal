@@ -64,7 +64,7 @@
                         <div class="row mb-3">
                             <label for="id_department" class="col-sm-3 col-form-label">{{ form.department.label }}</label>
                             <div class="col-sm-9">
-                                <select name="department" class="form-control card-body-form" id="id_department" required>
+                                <select name="department" class="form-control card-body-form" id="id_department">
                                     <option value=""></option>
                                     {% for choice in form.department.field.queryset %}
                                         <option value="{{ choice.pk }}" {% if choice.pk == form.department.value %}selected{% endif %}>

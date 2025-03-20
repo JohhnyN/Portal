@@ -2,11 +2,19 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, Task, Comment
 from django.utils.translation import gettext_lazy as _
+from django.utils.html import format_html
 
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ["username", "email", "first_name", "last_name", "is_staff", "photo"]
+    list_display = [
+        "username",
+        "email",
+        "custom_first_name",
+        "custom_last_name",
+        "is_staff",
+        "photo_thumbnail",
+    ]
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (
@@ -15,14 +23,12 @@ class CustomUserAdmin(UserAdmin):
                 "fields": (
                     "first_name",
                     "last_name",
+                    "custom_first_name",
+                    "custom_last_name",
+                    "surname",
                     "email",
-                    "first_name_ru",
-                    "first_name_kk",
-                    "last_name_ru",
-                    "last_name_kk",
-                    "surname_ru",
-                    "surname_kk",
                     "photo",
+                    "photo_display",
                 )
             },
         ),
@@ -51,13 +57,10 @@ class CustomUserAdmin(UserAdmin):
                     "password2",
                     "first_name",
                     "last_name",
+                    "custom_first_name",
+                    "custom_last_name",
+                    "surname",
                     "email",
-                    "first_name_ru",
-                    "first_name_kk",
-                    "last_name_ru",
-                    "last_name_kk",
-                    "surname_ru",
-                    "surname_kk",
                     "photo",
                     "is_active",
                     "is_staff",
@@ -68,6 +71,27 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
+    readonly_fields = ["photo_display"]
+
+    def photo_thumbnail(self, obj):
+        if obj.photo:
+            return format_html(
+                '<img src="{}" width="150" />',
+                obj.photo.url,
+            )
+        return "Нет фото"
+
+    photo_thumbnail.short_description = "Фото"
+
+    def photo_display(self, obj):
+        if obj.photo:
+            return format_html(
+                '<img src="{}" width="300" />',
+                obj.photo.url,
+            )
+        return "Нет фото"
+
+    photo_display.short_description = "Фото"
 
 
 admin.site.register(CustomUser, CustomUserAdmin)

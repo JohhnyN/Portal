@@ -10,22 +10,38 @@
 <div class="container mt-5">
     <h2 class="text-center">{% trans "Профиль пользователя" %}</h2>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 text-center">
             {% if user.photo %}
-                <img src="{{ user.photo.url }}" alt="{% trans 'Фото профиля' %}" class="img-fluid rounded-circle">
+                <img src="{{ user.photo.url }}" alt="{% trans 'Фото профиля' %}" class="img-fluid mb-3">
             {% else %}
-                <img src="{% static 'accounts/img/default-profile.png' %}" alt="{% trans 'Фото профиля' %}" class="img-fluid rounded-circle">
+                <img src="{% static 'accounts/img/default-profile.png' %}" alt="{% trans 'Фото профиля' %}" class="img-fluid rounded-circle mb-3">
             {% endif %}
+            <form method="post" enctype="multipart/form-data" action="{% url 'update_profile' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="photo" class="form-label">{% trans "Загрузить новое фото" %}</label>
+                    <input type="file" class="form-control" id="photo" name="photo">
+                </div>
+                <button type="submit" class="btn btn-primary">{% trans "Обновить фото" %}</button>
+            </form>
         </div>
         <div class="col-md-8">
-            <h3>{{ user.first_name }} {{ user.last_name }}</h3>
-            <p><strong>{% trans "Email" %}:</strong> {{ user.email }}</p>
-            <p><strong>{% trans "Имя на русском" %}:</strong> {{ user.first_name_ru }}</p>
-            <p><strong>{% trans "Фамилия на русском" %}:</strong> {{ user.last_name_ru }}</p>
-            <p><strong>{% trans "Отчество на русском" %}:</strong> {{ user.surname_ru }}</p>
-            <p><strong>{% trans "Имя на казахском" %}:</strong> {{ user.first_name_kk }}</p>            
-            <p><strong>{% trans "Фамилия на казахском" %}:</strong> {{ user.last_name_kk }}</p>            
-            <p><strong>{% trans "Отчество на казахском" %}:</strong> {{ user.surname_kk }}</p>
+            <form method="post" action="{% url 'update_profile' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="custom_first_name" class="form-label">{% trans "Имя" %}</label>
+                    <input type="text" class="form-control" id="custom_first_name" name="custom_first_name" value="{{ user.custom_first_name }}">
+                </div>
+                <div class="mb-3">
+                    <label for="custom_last_name" class="form-label">{% trans "Фамилия" %}</label>
+                    <input type="text" class="form-control" id="custom_last_name" name="custom_last_name" value="{{ user.custom_last_name }}">
+                </div>
+                <div class="mb-3">
+                    <label for="surname" class="form-label">{% trans "Отчество" %}</label>
+                    <input type="text" class="form-control" id="surname" name="surname" value="{{ user.surname }}">
+                </div>
+                <button type="submit" class="btn btn-primary">{% trans "Сохранить изменения" %}</button>
+            </form>
         </div>
     </div>
 </div>
