@@ -4,7 +4,7 @@
 
 {% block title %}
     {% if form.instance.pk %}
-        {% trans "Редактировать задачу" %}
+        {% trans "Редактировать задачу" %}        
     {% else %}
         {% trans "Создать задачу" %}
     {% endif %}
@@ -62,9 +62,13 @@
                             <label for="id_shared_with" class="col-sm-3 col-form-label">{{ form.shared_with.label }}</label>
                             <div class="col-sm-9">
                                 <select name="shared_with" id="id_shared_with" class="form-control w-100" multiple="multiple">
-                                    {% for user in form.fields.shared_with.queryset %}
+                                    {% for user in form.fields.shared_with.queryset %}                                    
                                         <option value="{{ user.pk }}" {% if user in form.initial.shared_with %}selected{% endif %}>
-                                            {{ user.custom_first_name|default_if_none:'' }} {{ user.custom_last_name|default_if_none:'' }} {{ user.surname|default_if_none:'' }}
+                                            {% if user.custom_first_name or user.custom_last_name or user.surname %}
+                                                {{ user.custom_last_name|default_if_none:'' }} {{ user.custom_first_name|default_if_none:'' }}  {{ user.surname|default_if_none:'' }}
+                                            {% else %}
+                                                {{ user.username }}
+                                            {% endif %}
                                         </option>
                                     {% endfor %}
                                 </select>
