@@ -1,0 +1,27 @@
+<!-- filepath: d:\PROJECTS\Portal\portal\accounts\templates\accounts\user_detail.html -->
+{% extends "accounts/user_page.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {{ user.username }}
+{% endblock %}
+
+{% block user_content %}
+<div class="container mt-5">
+    <h2 class="text-center">{% trans "Информация о пользователе" %}</h2>
+    <div class="card mt-4">
+        <div class="card-body">
+            <p><strong>{% trans "Логин:" %}</strong> {{ user.username }}</p>
+            <p><strong>{% trans "Электронная почта:" %}</strong> {{ user.email }}</p>
+            <p><strong>{% trans "ФИО:" %}</strong>
+                {% if user.custom_first_name or user.custom_last_name %}
+                    {{ user.custom_first_name|default_if_none:'' }} {{ user.custom_last_name|default_if_none:'' }} {{ user.surname|default_if_none:'' }}
+                {% else %}
+                    {% trans "Не указано" %}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    <a href="{% url 'users' %}" class="btn btn-secondary mt-3">{% trans "Назад к списку пользователей" %}</a>
+</div>
+{% endblock %}

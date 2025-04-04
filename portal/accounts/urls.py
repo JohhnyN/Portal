@@ -10,8 +10,9 @@ from .views import (
     task_complete,
     task_detail,
     profile,
-    users,
+    user_list,
     update_profile,
+    user_detail,
 )
 
 urlpatterns = [
@@ -34,6 +35,7 @@ urlpatterns = [
     path("tasks/<int:pk>/complete/", task_complete, name="task_complete"),
     path("tasks/<int:pk>/", task_detail, name="task_detail"),
     path("profile/", profile, name="profile"),
-    path("users/", users, name="users"),
+    path("users/", user_list, name="users"),
     path("update_profile/", update_profile, name="update_profile"),
+    path("users/<int:pk>/", user_detail, name="user_detail"),
 ]

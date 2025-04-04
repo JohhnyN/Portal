@@ -139,6 +139,11 @@ def update_profile(request):
 
 
 @login_required
-def users(request):
-    users = CustomUser.objects.filter(is_superuser=False)
+def user_list(request):
+    users = CustomUser.objects.filter(is_superuser=False).exclude(pk=request.user.pk)
     return render(request, "accounts/users.html", {"users": users})
+
+
+def user_detail(request, pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+    return render(request, "accounts/user_detail.html", {"user": user})
