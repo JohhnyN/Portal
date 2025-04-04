@@ -72,9 +72,6 @@ class Comment(models.Model):
     text = models.TextField(verbose_name="Комментарий")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
-    def __str__(self):
-        return f"Комментарий от {self.user.username} к задаче {self.task.title}"
-
     class Meta:
         verbose_name = "Комментарий"
         verbose_name_plural = "Комментарии"

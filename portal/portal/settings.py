@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "channels",
     "import_export",
     "mptt",
     "django_python3_ldap",
@@ -29,6 +30,16 @@ INSTALLED_APPS = [
     "main",
     "phonebook",
 ]
+
+ASGI_APPLICATION = "portal.asgi.application"
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

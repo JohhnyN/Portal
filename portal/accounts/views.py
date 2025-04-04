@@ -101,15 +101,19 @@ def task_detail(request, pk):
     task = get_object_or_404(Task, pk=pk)
     comments = task.comments.all()
     if request.method == "POST":
+        print("POST запрос получен")
         form = CommentForm(request.POST)
         if form.is_valid():
+            print("Форма валидна")
             comment = form.save(commit=False)
             comment.task = task
             comment.user = request.user
             comment.save()
+            print("Комментарий сохранен")
             return redirect("task_detail", pk=task.pk)
     else:
         form = CommentForm()
+        print(form.errors)
     return render(
         request,
         "accounts/task_detail.html",
