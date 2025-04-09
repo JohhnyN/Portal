@@ -24,6 +24,7 @@ env/
 ENV/
 .venv/
 .ENV/
+venv-portal/
 
 # VS Code
 .vscode/
