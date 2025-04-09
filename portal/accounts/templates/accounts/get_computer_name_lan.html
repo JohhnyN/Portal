@@ -1,0 +1,25 @@
+<!-- filepath: d:\PROJECTS\Portal\portal\accounts\templates\accounts\get_computer_name_lan.html -->
+{% extends "main/base.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% trans "Имя компьютера в локальной сети" %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">{% trans "Имя компьютера в локальной сети" %}</h2>
+    <table class="table table-bordered mt-4">
+        <tbody>
+            <tr>
+                <th scope="row">{% trans "IP-адрес" %}</th>
+                <td>{{ ip_address }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{% trans "Имя компьютера" %}</th>
+                <td>{{ computer_name }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

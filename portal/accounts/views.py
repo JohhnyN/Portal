@@ -4,11 +4,17 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import Task, CustomUser
 from .forms import TaskForm, CommentForm, ProfileUpdateForm
+import socket
 
 
 @login_required
 def user_page(request):
-    return render(request, "accounts/user_page.html", {"user": request.user})
+    http_host = request.META.get("HTTP_HOST")  # Получаем HTTP_HOST из META
+    context = {
+        "user": request.user,
+        "http_host": http_host,  # Добавляем в контекст
+    }
+    return render(request, "accounts/user_page.html", context)
 
 
 @login_required
@@ -101,19 +107,15 @@ def task_detail(request, pk):
     task = get_object_or_404(Task, pk=pk)
     comments = task.comments.all()
     if request.method == "POST":
-        print("POST запрос получен")
         form = CommentForm(request.POST)
         if form.is_valid():
-            print("Форма валидна")
             comment = form.save(commit=False)
             comment.task = task
             comment.user = request.user
             comment.save()
-            print("Комментарий сохранен")
             return redirect("task_detail", pk=task.pk)
     else:
         form = CommentForm()
-        print(form.errors)
     return render(
         request,
         "accounts/task_detail.html",
@@ -144,6 +146,27 @@ def user_list(request):
     return render(request, "accounts/users.html", {"users": users})
 
 
+@login_required
 def user_detail(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
     return render(request, "accounts/user_detail.html", {"user": user})
+
+
+@login_required
+def get_computer_name_lan(request):
+    ip_address = request.META.get('REMOTE_ADDR')
+    print(request.META)  # Выводим все заголовки META для отладки
+    computer_name = None
+    if ip_address:
+        try:
+            # Выполняем обратный DNS-запрос
+            host_info = socket.gethostbyaddr(ip_address)
+            computer_name = host_info[0]  # Имя хоста обычно находится в первом элементе кортежа
+        except socket.herror as e:
+            # Обработка ошибки, если обратный DNS-запрос не удался
+            computer_name = f"Не удалось получить имя хоста для IP: {ip_address} ({e})"
+        except socket.gaierror as e:
+            computer_name = f"Ошибка при получении адреса для IP: {ip_address} ({e})"
+
+    context = {'ip_address': ip_address, 'computer_name': computer_name}
+    return render(request, 'accounts/get_computer_name_lan.html', context)

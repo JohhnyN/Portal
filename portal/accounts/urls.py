@@ -13,6 +13,7 @@ from .views import (
     user_list,
     update_profile,
     user_detail,
+    get_computer_name_lan,
 )
 
 urlpatterns = [
@@ -38,4 +39,5 @@ urlpatterns = [
     path("users/", user_list, name="users"),
     path("update_profile/", update_profile, name="update_profile"),
     path("users/<int:pk>/", user_detail, name="user_detail"),
+    path("get-computer-name/", get_computer_name_lan, name="get_computer_name"),
 ]
