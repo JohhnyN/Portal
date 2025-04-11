@@ -1,12 +1,12 @@
 <!-- filepath: d:\PROJECTS\Portal\portal\accounts\templates\accounts\task_detail.html -->
-{% extends "main/base.html" %}
+{% extends "accounts/user_page.html" %}
 {% load i18n static %}
 
 {% block title %}
     {{ task.title }}
 {% endblock %}
 
-{% block content %}
+{% block user_content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -120,55 +120,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    const taskId = {{ task.id }};
-    const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
-    const wsUrl = `${wsProtocol}${window.location.host}/ws/task/${taskId}/`;
-
-    const commentSocket = new WebSocket(wsUrl);
-
-    commentSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        const commentList = document.getElementById('comment-list');
-        if (commentList) {
-            const newComment = `
-                <div class="mb-3 p-3 border rounded">
-                    <div class="d-flex justify-content-between">
-                        <strong>${data.user}</strong>
-                        <small class="text-muted">${data.created_at}</small>
-                    </div>
-                    <p class="mt-2">${data.text}</p>
-                </div>
-            `;
-            commentList.innerHTML += newComment;
-        }
-    };
-
-    commentSocket.onerror = function(e) {
-        console.error('Ошибка WebSocket:', e);
-    };
-
-    commentSocket.onclose = function(e) {
-        console.error('WebSocket закрыт неожиданно');
-    };
-
-    document.getElementById('comment-form').onsubmit = function(e) {
-        e.preventDefault();
-        const textInput = document.getElementById('id_text');
-        if (textInput.value.trim() === "") {
-            alert("Комментарий не может быть пустым.");
-            return;
-        }
-        try {
-            commentSocket.send(JSON.stringify({
-                'text': textInput.value
-            }));
-            textInput.value = '';
-        } catch (error) {
-            console.error('Ошибка при отправке сообщения:', error);
-            alert("Не удалось отправить комментарий. Попробуйте снова.");
-        }
-    };
-</script>
 {% endblock %}
