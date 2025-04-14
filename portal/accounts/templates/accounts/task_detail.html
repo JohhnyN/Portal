@@ -120,4 +120,55 @@
         </div>
     </div>
 </div>
+
+<script>
+    const taskId = "{{ task.id }}";
+    const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+    const wsUrl = `${protocol}${window.location.host}/ws/task/${taskId}/`;
+
+    const socket = new WebSocket(wsUrl);
+
+    socket.onopen = function () {
+        console.log("WebSocket соединение установлено.");
+    };
+
+    socket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        console.log("Получено сообщение:", data);
+
+        // Добавление нового комментария в список
+        const commentList = document.getElementById("comment-list");
+        const newComment = document.createElement("div");
+        newComment.classList.add("mb-3", "p-3", "border", "rounded");
+        newComment.innerHTML = `
+            <div class="d-flex justify-content-between">
+                <strong>${data.user}</strong>
+                <small class="text-muted">${data.created_at}</small>
+            </div>
+            <p class="mt-2">${data.text}</p>
+        `;
+        commentList.appendChild(newComment);
+    };
+
+    socket.onclose = function () {
+        console.log("WebSocket соединение закрыто.");
+    };
+
+    socket.onerror = function (e) {
+        console.error("Ошибка WebSocket:", e);
+    };
+
+    // Отправка комментария
+    const commentForm = document.getElementById("comment-form");
+    commentForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const textInput = document.getElementById("id_text");
+        const message = textInput.value;
+
+        if (message.trim() !== "") {
+            socket.send(JSON.stringify({ text: message }));
+            textInput.value = "";
+        }
+    });
+</script>
 {% endblock %}
